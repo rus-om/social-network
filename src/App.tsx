@@ -10,7 +10,7 @@ import {RootStateType} from "./redux/state";
 type AppPropsType = {
     state: RootStateType
 }
-
+//test commit
 function App(props: AppPropsType) {
     return (
         <BrowserRouter>
