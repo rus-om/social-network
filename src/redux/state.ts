@@ -52,6 +52,7 @@ export type ActionType = {
     type: string
     postText?: any //ИСПРАВИТЬ!!!
     newText?: any //ИСПРАВИТЬ!!!
+    messageText?: any //ИСПРАВИТЬ!!!
 }
 
 let store = {
@@ -83,30 +84,6 @@ let store = {
     getState() {
         return this._state
     },
-    addPost(postText: string) {
-        let newPost: PostDataType = {
-            id: 5,
-            message: postText,
-            likesCount: 0,
-        }
-        this._state.profilePage.postData.push(newPost)
-        renderThree(this._state)
-    },
-    changeNewText(newText: string) {
-        this._state.profilePage.messageForNewPost = newText
-        renderThree(this._state)
-    },
-    addText(messageText: string) {
-        let newMessage: MessagesType = {
-            id: 4, message: messageText
-        }
-        this._state.dialogsPage.messages.push(newMessage)
-        renderThree(this._state)
-    },
-    changeNewMessageText(newText: string) {
-        this._state.dialogsPage.textForNewMessage = newText
-        renderThree(this._state)
-    },
     subscribe(observer: (state: RootStateType) => void) {
         renderThree = observer
     },
@@ -121,6 +98,15 @@ let store = {
             renderThree(this._state)
         } else if (action.type === "CHANGE-NEW-TEXT") {
             this._state.profilePage.messageForNewPost = action.newText
+            renderThree(this._state)
+        } else if (action.type === "ADD-TEXT") {
+            let newMessage: MessagesType = {
+                id: 4, message: action.messageText
+            }
+            this._state.dialogsPage.messages.push(newMessage)
+            renderThree(this._state)
+        } else if (action.type === "CHANGE-NEW-MESSAGE-TEXT") {
+            this._state.dialogsPage.textForNewMessage = action.newText
             renderThree(this._state)
         }
 

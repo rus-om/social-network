@@ -12,8 +12,7 @@ let renderThree = (state: RootStateType) => {
         <React.StrictMode>
             <App state={state}
                  dispatch={store.dispatch.bind(store)}
-                 addText={store.addText.bind(store)}
-                 changeNewMessageText={store.changeNewMessageText.bind(store)}/>
+                 /*changeNewMessageText={store.changeNewMessageText.bind(store)}*//>
         </React.StrictMode>,
         document.getElementById('root')
     );

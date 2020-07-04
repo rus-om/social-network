@@ -10,11 +10,8 @@ import {RootStateType, ActionType} from "./redux/state";
 type AppPropsType = {
     dispatch: (action: ActionType) => void
     state: RootStateType
-    addText: (messageText: string) => void
-    changeNewMessageText : (newText: string) => void
 }
 
-//test commit
 function App(props: AppPropsType) {
     return (
         <BrowserRouter>
@@ -28,9 +25,9 @@ function App(props: AppPropsType) {
                                                                   />}/>
                     <Route path="/dialogs" render={() => <Dialogs dialogs={props.state.dialogsPage.dialogs}
                                                                   messages={props.state.dialogsPage.messages}
-                                                                  addText={props.addText}
+                                                                  dispatch={props.dispatch}
                                                                   textForNewMessage={props.state.dialogsPage.textForNewMessage}
-                                                                  changeNewMessageText={props.changeNewMessageText}/>}/>
+                                                                  />}/>
                 </div>
             </div>
         </BrowserRouter>

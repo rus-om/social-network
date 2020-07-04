@@ -3,14 +3,13 @@ import classes from "./Dialogs.module.css";
 import {NavLink} from "react-router-dom";
 import DialogItem from "./DialogsItem/DialogItem";
 import Message from "./Message/Message";
-import {DialogsType, MessagesType} from "../../redux/state";
+import {ActionType, DialogsType, MessagesType} from "../../redux/state";
 
 function Dialogs(props: {
     dialogs: DialogsType[],
     messages: MessagesType[],
-    addText: (messageText: string) => void,
     textForNewMessage: string
-    changeNewMessageText : (newText: string) => void
+    dispatch: (action: ActionType) => void
 }) {
 
 
@@ -20,10 +19,14 @@ function Dialogs(props: {
 
 
     let addMessage = () => {
-        props.addText(props.textForNewMessage)
+        let action = { type: "ADD-TEXT", messageText: props.textForNewMessage  }
+        props.dispatch(action)
     }
 
-    const onChangeMessageTextHandler = (e: ChangeEvent<HTMLTextAreaElement>) => { props.changeNewMessageText(e.currentTarget.value)}
+    const onChangeMessageTextHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        let action = { type: "CHANGE-NEW-MESSAGE-TEXT", newText: e.currentTarget.value }
+        props.dispatch(action)
+    }
 
     return (
 
