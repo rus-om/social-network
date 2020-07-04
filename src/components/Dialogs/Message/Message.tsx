@@ -5,10 +5,11 @@ type MessagePropsType = {
     message: string
 }
 
-function Message (props: MessagePropsType) {
+function Message(props: MessagePropsType) {
     return (
-    <div className={classes.message}>{props.message}</div>
-)
+        <div className={classes.message}>{props.message}
+        </div>
+                )
 }
 
 export default Message
