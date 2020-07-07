@@ -1,10 +1,10 @@
 import React from 'react';
 import './index.scss';
 import * as serviceWorker from './serviceWorker';
-import state, {RootStateType} from "./redux/state";
+import {RootStateType} from "./redux/store";
 import ReactDOM from "react-dom";
 import App from "./App";
-import store from "./redux/state";
+import store from "./redux/redux-store";
 
 
 let renderThree = (state: RootStateType) => {
@@ -18,7 +18,10 @@ let renderThree = (state: RootStateType) => {
     );
 }
 
-store.subscribe(renderThree)
+store.subscribe(() => {
+    let state = store.getState()
+    renderThree(state)
+})
 
 renderThree(store.getState())
 

@@ -1,3 +1,7 @@
+import profileReducer from "./profileReducer";
+import dialogsReducer from "./dialogsReducer";
+import sidebarReducer from "./sidebarReducer";
+
 let renderThree = (state: RootStateType) => {
     console.log("123")
 }
@@ -13,13 +17,13 @@ export type ProfilePageType = {
     messageForNewPost: string
 }
 
-type DialogsPageType = {
+export type DialogsPageType = {
     dialogs: Array<DialogsType>
     messages: Array<MessagesType>
     textForNewMessage: string
 }
 
-type SidebarType = {}
+export type SidebarType = {}
 
 
 export type PostDataType = {
@@ -88,28 +92,10 @@ let store = {
         renderThree = observer
     },
     dispatch(action: ActionType) {
-        if (action.type === "ADD-POST") {
-            let newPost: PostDataType = {
-                id: 5,
-                message: action.postText,
-                likesCount: 0,
-            }
-            this._state.profilePage.postData.push(newPost)
-            renderThree(this._state)
-        } else if (action.type === "CHANGE-NEW-TEXT") {
-            this._state.profilePage.messageForNewPost = action.newText
-            renderThree(this._state)
-        } else if (action.type === "ADD-TEXT") {
-            let newMessage: MessagesType = {
-                id: 4, message: action.messageText
-            }
-            this._state.dialogsPage.messages.push(newMessage)
-            renderThree(this._state)
-        } else if (action.type === "CHANGE-NEW-MESSAGE-TEXT") {
-            this._state.dialogsPage.textForNewMessage = action.newText
-            renderThree(this._state)
-        }
-
+        this._state.profilePage = profileReducer(this._state.profilePage, action)
+        this._state.dialogsPage = dialogsReducer(this._state.dialogsPage, action)
+        this._state.sidebar = sidebarReducer(this._state.sidebar, action)
+        renderThree(this._state)
     }
 }
 
