@@ -1,37 +1,65 @@
 import React from 'react';
 import './App.css';
-import Header from "./components/Header/Header";
 import Navbar from "./components/Navbar/Navbar";
-import Profile from "./components/Profile/Profile";
-import Dialogs from "./components/Dialogs/Dialogs";
-import {BrowserRouter, Route} from 'react-router-dom'
-import {RootStateType, ActionType} from "./redux/store";
+import { BrowserRouter, Route } from 'react-router-dom'
+import DialogsContainer from "./components/Dialogs/DialogsContainer";
+import { HeaderFuncContainer } from './components/Header/HeaderFuncContainer';
+import Login from "./components/Login/Login";
+import ProfileContainer from './components/Profile/ProfileContainer';
+import UsersContainer from "./components/Users/UsersContainer";
+import {compose} from "redux";
+import {connect} from "react-redux";
+import {AppRootStateType} from "./redux/redux-store";
+import {initializeAppTC} from "./redux/appReducer";
+import {LoadingSpinner} from "./components/Users/LoadingSpinner";
+import {withRouter} from "react-router";
 
-type AppPropsType = {
-    dispatch: (action: ActionType) => void
-    state: RootStateType
-}
+type AppPropsType = AppStatePropsType & AppDispatchPropsType
 
-function App(props: AppPropsType) {
-    return (
-        <BrowserRouter>
-            <div className="app-wrapper">
-                <Navbar/>
-                <Header/>
-                <div>
-                    <Route path="/profile" render={() => <Profile postData={props.state.profilePage.postData}
-                                                                  dispatch={props.dispatch}
-                                                                  message={props.state.profilePage.messageForNewPost}
-                                                                  />}/>
-                    <Route path="/dialogs" render={() => <Dialogs dialogs={props.state.dialogsPage.dialogs}
-                                                                  messages={props.state.dialogsPage.messages}
-                                                                  dispatch={props.dispatch}
-                                                                  textForNewMessage={props.state.dialogsPage.textForNewMessage}
-                                                                  />}/>
+class App extends React.Component<AppPropsType> {
+    componentDidMount() {
+        this.props.initializeAppTC()
+    }
+
+    render() {
+        if (!this.props.initialize) {
+            return <LoadingSpinner/>
+        }
+        return (
+            <BrowserRouter>
+                <div className="app-wrapper">
+                    <Navbar/>
+                    <HeaderFuncContainer/>
+                    <div>
+                        <Route path="/profile/:userId?" render={() => <ProfileContainer/>}/>
+                        <Route path="/dialogs" render={() => <DialogsContainer/>}/>
+                        <Route path="/users" render={() => <UsersContainer/>}/>
+                        <Route path="/login" render={() => <Login/>}/>
+                    </div>
                 </div>
-            </div>
-        </BrowserRouter>
-    )
+            </BrowserRouter>
+        )
+    }
 }
 
-export default App;
+const mapStateToProps = (state: AppRootStateType): AppStatePropsType => {
+    return {
+        initialize: state.app.initialize,
+    }
+}
+
+const mapDispatchToProps = (dispatch: any): AppDispatchPropsType => {
+    return {
+        initializeAppTC: () => dispatch(initializeAppTC()),
+    }
+}
+
+
+export default compose<React.ComponentType>(connect(mapStateToProps, mapDispatchToProps))(App)
+
+type AppStatePropsType = {
+    initialize: boolean
+}
+type AppDispatchPropsType = {
+    initializeAppTC: () => void
+}

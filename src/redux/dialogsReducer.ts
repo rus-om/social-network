@@ -1,14 +1,13 @@
-import {ActionType, DialogsPageType, MessagesType, PostDataType, RootStateType} from "./store";
+import {ActionType} from "./redux-store";
 
-export const changeNewMessageTextAC = (text: string) => ({type: CHANGE_NEW_MESSAGE_TEXT, newText: text})
-export const addTextAC = (text: string) => ({type: ADD_TEXT, messageText: text})
+export const addTextAC = (newMessageBody: string): AddTextActionType => ({type: "ADD-TEXT", newMessageBody})
 
-
-const CHANGE_NEW_MESSAGE_TEXT = "CHANGE-NEW-MESSAGE-TEXT"
-const ADD_TEXT = "ADD-TEXT"
+export type AddTextActionType = {
+    type: "ADD-TEXT"
+    newMessageBody: string
+}
 
 let initialState: DialogsPageType = {
-    textForNewMessage: "",
     dialogs: [
         {id: 1, name: "ALexey"},
         {id: 2, name: "Aleftin"},
@@ -21,24 +20,35 @@ let initialState: DialogsPageType = {
         {id: 2, message: "Hi"},
         {id: 3, message: "Shalom"},
     ]
-
 }
 
-const dialogsReducer = (state: DialogsPageType = initialState, action: ActionType) => {
+const dialogsReducer = (state: DialogsPageType = initialState, action: ActionType): DialogsPageType => {
     switch (action.type) {
-        case ADD_TEXT: {
-            let newMessage: MessagesType = {id: 4, message: action.messageText}
-            state.messages.push(newMessage)
-            state.textForNewMessage = ""
-            return state
+        case "ADD-TEXT": {
+            return {
+                ...state,
+                messages: [...state.messages, {id: 6, message: action.newMessageBody}]
+            }
         }
-        case CHANGE_NEW_MESSAGE_TEXT: {
-            state.textForNewMessage = action.newText
+        default:
             return state
-
-        }
-        default: return state
     }
+}
+
+
+export type DialogsPageType = {
+    dialogs: Array<DialogsType>
+    messages: Array<MessagesType>
+}
+
+export type DialogsType = {
+    id: number
+    name: string
+}
+
+export type MessagesType = {
+    id: number
+    message: string
 }
 
 export default dialogsReducer

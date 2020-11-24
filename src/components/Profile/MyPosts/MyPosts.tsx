@@ -1,13 +1,13 @@
 import React, {ChangeEvent} from 'react';
 import Post from "./Post/Post";
-import './MyPosts.scss';
-import { addPostAC, changeNewTextAC } from "../../../redux/profileReducer";
-import {ActionType} from "../../../redux/store";
+import {Field, reduxForm} from "redux-form";
+import {SubmitHandler} from "redux-form/lib/reduxForm";
+import {maxLengthCreator, requiredField} from "../../../utils/validators/validators";
+import {Textarea} from "../../common/FormsControls/FormsControls";
 
 type MypostsType = {
+    addPost:(newPostTextBody: string) => void
     postData: Array<PostDataType>
-    dispatch: (action: ActionType) => void
-    message: string
 }
 
 type PostDataType = {
@@ -16,22 +16,11 @@ type PostDataType = {
     likesCount: number
 }
 
-
-
-function MyPosts(props: MypostsType) {
-
+const MyPosts = React.memo( (props: MypostsType) => {
     let postsElements = props.postData.map( e => <Post message ={e.message} likesCount ={e.likesCount}/>)
 
-    let btnOnClick = () => {
-        let text: string = props.message
-        let action = addPostAC(text)
-        props.dispatch(action)
-    }
-
-    const onPostChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        let text = e.currentTarget.value
-        let action = changeNewTextAC(text)
-        props.dispatch(action)
+    const addNewPost = (values: any) => {
+        props.addPost(values.newPostTextBody)
     }
 
     return (
@@ -40,18 +29,33 @@ function MyPosts(props: MypostsType) {
                 <div>
                     New post
                 </div>
-                <div>
-                    <textarea className="form-control"
-                              id="exampleFormControlTextarea1"
-                              cols={200} rows={4}
-                    value={props.message}
-                    onChange={onPostChangeHandler}>
-                    </textarea>
-                    <button className="btn btn-primary" onClick={btnOnClick}>New Post</button>
-                </div>
+                <AddPostReduxForm onSubmit={addNewPost}/>
                 { postsElements }
             </div>
     )
+})
+
+type AddPostFormPropsType = {
+    handleSubmit: SubmitHandler
 }
+const maxLength10 = maxLengthCreator(10)
+const AddPostForm = (props: AddPostFormPropsType) => {
+    return (
+        <form onSubmit={props.handleSubmit}>
+            <div>
+                <Field placeholder={"Text"}
+                       validate={[requiredField, maxLength10]}
+                       component={Textarea}
+                       name={'newPostTextBody'}
+                       className="form-control"
+                       rows="3"/>
+                <button className="btn btn-primary">New Post</button>
+            </div>
+        </form>
+    )
+}
+
+const AddPostReduxForm = reduxForm({form: 'dialogAddMessageForm'})(AddPostForm)
+
 
 export default MyPosts

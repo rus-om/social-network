@@ -1,38 +1,37 @@
-import React, {ChangeEvent} from "react";
+import React from "react";
 import classes from "./Dialogs.module.css";
-import {NavLink} from "react-router-dom";
 import DialogItem from "./DialogsItem/DialogItem";
 import Message from "./Message/Message";
-import { addTextAC, changeNewMessageTextAC } from "../../redux/dialogsReducer";
-import {DialogsType, MessagesType, ActionType} from "../../redux/store";
+import {Redirect} from "react-router";
+import {reduxForm, Field} from "redux-form";
+import {SubmitHandler} from "redux-form/lib/reduxForm";
+import {Textarea} from "../common/FormsControls/FormsControls";
+import {maxLengthCreator, requiredField} from "../../utils/validators/validators";
+import { DialogsType, MessagesType } from "../../redux/dialogsReducer";
 
-function Dialogs(props: {
+export type DialogsStatePropsType = {
     dialogs: DialogsType[],
     messages: MessagesType[],
-    textForNewMessage: string
-    dispatch: (action: ActionType) => void
-}) {
+}
 
+export type DialogsDispatchPropsType = {
+    addMessage: (newMessageBody: string) => void,
+}
 
+export type DialogsPropsType = DialogsStatePropsType & DialogsDispatchPropsType
+
+function Dialogs(props: DialogsPropsType) {
     let dialogsElements = props.dialogs.map(e => <DialogItem name={e.name} id={e.id}/>)
-
     let messageElements = props.messages.map(e => <Message message={e.message}/>)
 
-
-    let addMessage = () => {
-        let text = props.textForNewMessage
-        let action = addTextAC(text)
-        props.dispatch(action)
+    const addNewMessage = (values: any) => {
+        props.addMessage(values.newMessageBody)
     }
 
-    const onChangeMessageTextHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        let text = e.currentTarget.value
-        let action = changeNewMessageTextAC(text)
-        props.dispatch(action)
-    }
-
+    // @ts-ignore
+    if (!props.isAuth)
+        return <Redirect to={"/login"}/>
     return (
-
         <div className={classes.dialogs}>
             <div className={classes.dialogsItems}>
                 {dialogsElements}
@@ -40,19 +39,33 @@ function Dialogs(props: {
             <div className={classes.messages}>
                 {messageElements}
             </div>
-            <div><textarea className="form-control"
-                           id="exampleFormControlTextarea1"
-                           cols={200} rows={4}
-                           value={props.textForNewMessage}
-            onChange={onChangeMessageTextHandler}>
-            </textarea>
-            </div>
-            <div>
-                <button className="btn btn-primary" onClick={addMessage}>New Post</button>
-            </div>
+            <AddmessageReduxForm onSubmit={addNewMessage}/>
         </div>
     )
-
 }
+
+type AddMessageFormPropsType ={
+    handleSubmit: SubmitHandler
+}
+
+const maxLength30 = maxLengthCreator(30)
+
+const AddMessageForm = (props: AddMessageFormPropsType) => {
+    return (
+        <form onSubmit={props.handleSubmit}>
+            <div>
+                <Field placeholder={"Enter your message"}
+                       component={Textarea}
+                       validate={[requiredField, maxLength30]}
+                       name={'newMessageBody'}/>
+            </div>
+            <div>
+                <button className="btn btn-primary">New Post</button>
+            </div>
+        </form>
+    )
+}
+
+const AddmessageReduxForm = reduxForm({form: 'dialogAddMessageForm'})(AddMessageForm)
 
 export default Dialogs

@@ -1,4 +1,4 @@
-
+/*
 .nav {
     grid-area: n;
 
@@ -12,4 +12,10 @@
 
 .item.active {
     color: darkgoldenrod;
+}
+*/
+
+.img {
+    height: 80px;
+    width: 100px;
 }

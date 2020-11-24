@@ -1,24 +1,44 @@
 import React from 'react';
-import classes from './Profile.module.css';
-import MyPosts from "./MyPosts/MyPosts";
 import Profileinfo from "./ProfileInfo/ProfileInfo";
-import {ActionType, PostDataType} from "../../redux/store";
+import MyPostsContainer from "./MyPosts/MyPostsContainer";
+import { ProfileType } from '../../redux/profileReducer';
 
-type ProfilePageType = {
-    postData: Array <PostDataType>
-    dispatch: (action: ActionType) => void
-    message: string
+
+export type ProfileStatePropsType = {
+    profile: ProfileType | null
+    isAuth: boolean
+    statusText: string
+    userId?: number
 }
 
+export type ProfileDispatchPropsType = {
+    setUserProfileAC: (profile: ProfileType) => void
+    getStatusTC: (userId: number) => void
+    getUserProfileTC ?: (userId: number) => void
+    updateStatusTC: (status: string) => void
+    updatePhotoTC: (photo: File) => void
+}
 
-function Profile(props: ProfilePageType) {
+type OwnProps = {
+    isOwner: boolean
+}
+
+export type ProfilePropsType = ProfileStatePropsType & ProfileDispatchPropsType & OwnProps
+
+
+function Profile(props: ProfilePropsType) {
+/*    if (!props.isAuth)
+        return <Redirect to={"/login"}/>*/
     return (
-        <div className={classes.content}>
-            <Profileinfo />
-            <MyPosts postData={props.postData}
-                     dispatch={props.dispatch}
-                     message={props.message}
-                     />
+        <div >
+            <Profileinfo
+                profile={props.profile}
+                statusText={props.statusText}
+                updateStatusTC={props.updateStatusTC}
+                updatePhotoTC={props.updatePhotoTC}
+                isOwner={props.isOwner}
+            />
+            <MyPostsContainer />
         </div>
     )
 
